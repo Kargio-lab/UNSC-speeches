@@ -2,25 +2,129 @@
 title: "UNSC Speeches"
 author: "Karam"
 format: html
+warning: FALSE
+echo: FALSE
 ---
 
-## Quarto
+## 1. Does rhetoric influence voting behavior at the UNSC?
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+To answer this question, Data was collected from the Archive of the United Nations concerning the Debates held at the United Nations Security Council. Two debates with different outcomes were picked, one in which the US vetoed, and one during which the US did not Veto a resolution. We took special attention on keeping all other possible confounding variables stable. The military situation on the ground did not change and there is nothing pointing to a shift in foreign policy. 
 
-## Running Code
+The speeches of all the P5 member were coded using a Codebook inspired from International Law, the functioning of the Council and the dynamics during the two debates. Each sentence was coded and attributed to a type of rhetoric in line with the Codebook. 
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+This data will should hopefully allow us to compare the impact of rhetoric on the US's voting behavior at the UNSC.
 
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this 
+## 2. Rhetoric usage across the two studied debates.
 
 ```{r}
-#| echo: false
-2 * 2
+setwd("C:/Users/dropp/Desktop/Masterarbeit UNSC Debates/Data new/")
+##getwd()
+speeches <- read.csv("C:/Users/dropp/Desktop/Masterarbeit UNSC Debates/Data new/1_Observation_FINAL.csv",
+                 header=TRUE, sep=";", na.strings = "")
+
+library(tidyverse)
+library(dplyr)
+library(forcats)
+library(stringr)
+library(gridExtra)
+
+speeches1 <- speeches |>
+  na.omit() |>
+  mutate(
+    Category = case_when(
+      Code == "1.1" ~ "Jus.Wording",
+      Code ==   "1.2.1" ~ "Jus.Terrorism",
+      Code ==   "1.2.2" ~ "Jus.Humanitarian",
+      Code ==  "1.2.3" ~ "Jus.Peace",
+      Code ==   "1.2.4" ~ "Jus.Int.Crimes",
+      Code ==  "1.2.5" ~ "Jus.Int.Law",
+      Code ==  "1.2.6" ~ "Jus.PoC",
+      Code ==   "1.2.7" ~ "Jus.Moral",
+      Code ==    "1.2.8" ~ "Jus.Genocide",
+      Code ==   "1.2.9" ~ "Jus.SelfDefence",
+      Code ==   "1.2.10" ~ "Jus.Sex.Violence",
+      Code ==    "1.2.11" ~ "Jus.W&C",
+      Code ==   "1.3" ~ "Jus.Consistency",
+      Code ==   "2.1" ~ "Crit.Wording",
+      Code ==   "2.2.1" ~ "Crit.Terrorism",
+      Code ==   "2.2.2" ~ "Crit.Humanitarian",
+      Code ==   "2.2.3" ~ "Crit.Peace",
+      Code ==  "2.2.4" ~ "Crit.Int.Crimes",
+      Code ==   "2.2.5" ~ "Crit.Int.Law",
+      Code ==   "2.2.6" ~ "Crit.PoC",
+      Code ==   "2.2.7" ~ "Crit.Moral",
+      Code ==  "2.2.8" ~ "Crit.Genocide",
+      Code ==   "2.2.9" ~ "Crit.Sex.Violence",
+      Code ==   "2.2.10" ~ "Crit.W&C",
+      Code ==  "2.3" ~ "Crit.Consistency",
+      Code ==   "2.4" ~ "Crit.Selfish"), 
+    CritJus = case_when(
+      Code == "1.1" ~ "Justification",
+      Code ==   "1.2.1" ~ "Justification",
+      Code ==   "1.2.2" ~ "Justification",
+      Code ==  "1.2.3" ~ "Justification",
+      Code ==   "1.2.4" ~ "Justification",
+      Code ==  "1.2.5" ~ "Justification",
+      Code ==  "1.2.6" ~ "Justification",
+      Code ==   "1.2.7" ~ "Justification",
+      Code ==    "1.2.8" ~ "Justification",
+      Code ==   "1.2.9" ~ "Justification",
+      Code ==   "1.2.10" ~ "Justification",
+      Code ==    "1.2.11" ~ "Justification",
+      Code ==   "1.3" ~ "Justification",
+      Code ==   "2.1" ~ "Critique",
+      Code ==   "2.2.1" ~ "Critique",
+      Code ==   "2.2.2" ~ "Critique",
+      Code ==   "2.2.3" ~ "Critique",
+      Code ==  "2.2.4" ~ "Critique",
+      Code ==   "2.2.5" ~ "Critique",
+      Code ==   "2.2.6" ~ "Critique",
+      Code ==   "2.2.7" ~ "Critique",
+      Code ==  "2.2.8" ~ "Critique",
+      Code ==   "2.2.9" ~ "Critique",
+      Code ==   "2.2.10" ~ "Critique",
+      Code ==  "2.3" ~ "Critique",
+      Code ==   "2.4" ~ "Critique"),  
+    )
+
+Graph1 <- speeches1 |>
+  na.omit() |> 
+  count(Category, CritJus, sort = TRUE) |>
+  mutate(perc = n / sum(n)) |>
+  ggplot(aes(x = perc, y = fct_reorder(Category, n))) +
+  geom_histogram(stat = "identity") + 
+  labs(title = "Distribution of the Categories in both debates",
+       subtitle = "Justifications based on Consistency, Peace&Security, dominated the two debates",
+       x = "Usage", y = "Categories",
+       caption = "Source: Dataset") +
+  scale_x_continuous(labels = scales::percent) +
+  facet_wrap(~ CritJus) +
+  theme_gray()
+Graph1
+
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## 3. When Comparing Russian and American rhetoric across the debates
+
+Russia's rhetoric was centered around criticizing the genocide and on the selfishness of the US's foreign policy. US rhetoric focused on justifying the consistency of its position and voting behavior, while mostly criticizing Terrorism.
+
+```{r}
+USA_RUS_Plot <- speeches1 |>
+  na.omit() |>
+  filter(Country == "Russia" | Country == "USA")
+USA_RUS_Plot |>
+  count(Category, Country, Date) |>
+  ggplot(aes(y = fct_reorder(Category, n), x = n, fill = Country)) +
+  geom_histogram(stat = "identity", bins = 0.1) +
+    #coord_polar() +
+  labs(title = "Occurrence of Categories in the american and russian speech",
+       subtitle = "Comparison of the Debates: vetoed and non-vetoed resolution",
+       caption = "Source : Dataset",
+       x = "Usage", y = "Categories") +
+  theme(panel.grid.major = element_blank(),  
+        panel.grid.minor = element_blank()) + 
+  facet_wrap(Date ~ Country)
+```
+
+
