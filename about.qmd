@@ -1,0 +1,9 @@
+---
+title: "About this Project"
+author: "Karam"
+format: html
+warning: FALSE
+echo: FALSE
+---
+
+Without the Data Science workshop of Mr. David Kane, this project would not have been possible.

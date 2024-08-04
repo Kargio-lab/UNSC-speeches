@@ -1,0 +1,9 @@
+---
+title: "Sources for this Project"
+author: "Karam"
+format: html
+warning: FALSE
+echo: FALSE
+---
+
+This data was gathered by manually extracting all the speeches between the 15th of October 2023 and the 25th March 2024. The Data was coded, sentence per sentence, with a manually constructed codebook, inspired by pragmatist sociological Theory and norms in International Relations.

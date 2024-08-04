@@ -107,7 +107,7 @@ Graph1
 
 ## 3. Comparing Russian and American rhetoric across the debates
 
-Russia's rhetoric was centered around criticizing the genocide and on the selfishness of the US's foreign policy. US rhetoric focused on justifying the consistency of its position and voting behavior, while mostly criticizing Terrorism.
+Russia's rhetoric was centered around criticizing the genocide and the selfishness of the US's foreign policy. US rhetoric focused on justifying the consistency of its position and voting behavior, while mostly criticizing Terrorism.
 ```{r}
 USA_RUS_Plot <- speeches1 |>
   na.omit() |>
